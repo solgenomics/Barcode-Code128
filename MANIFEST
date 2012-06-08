@@ -1,0 +1,11 @@
+Changes
+MANIFEST
+Makefile.PL
+README
+lib/Barcode/Code128.pm
+t/barcode.t
+t/code128.gif
+t/code128.png
+t/gif.t
+t/png.t
+META.yml                                 Module meta-data (added by MakeMaker)
