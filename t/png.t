@@ -12,9 +12,8 @@ use Barcode::Code128 qw(FNC1);
 
 use_ok("GD");
 
-
  SKIP: {
-     skip "GD version < 1.20 - no png support", 1 unless $GD::VERSION > 1.20;
+     skip "GD version < 1.20 - no png support", 294 unless $GD::VERSION > 1.20;
      
      my $code = new Barcode::Code128;
      
@@ -28,7 +27,6 @@ use_ok("GD");
 	 my $y = int($image->height()/2);
 
 	 my ($r, $g, $b) = $image->rgb($image->getPixel($x, $y));
-	 
 	 my ($R, $G, $B) = $good->rgb($good->getPixel($x, $y));
 	 
 	 ok($r == $R && $g == $G && $b == $B, "color test $x");
