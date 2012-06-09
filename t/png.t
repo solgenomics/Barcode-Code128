@@ -7,7 +7,7 @@
 
 use strict;
 
-use Test::More tests=>101;
+use Test::More tests=>295;
 use Barcode::Code128 qw(FNC1);
 
 use_ok("GD");
@@ -23,16 +23,15 @@ use_ok("GD");
      my $good = GD::Image->newFromPng('t/code128.png');
      my $image = GD::Image->newFromPngData($test);
      
-     for (my $i=0; $i< 100; $i++) { 
-	 	 
-	 my $x = int(rand() * $image->width);
-	 my $y = int(rand() * $image->height);
+     for (my $x=0; $x< $image->width; $x++) { 
 	 
+	 my $y = int($image->height()/2);
+
 	 my ($r, $g, $b) = $image->rgb($image->getPixel($x, $y));
 	 
 	 my ($R, $G, $B) = $good->rgb($good->getPixel($x, $y));
 	 
-	 ok($r == $R && $g == $G && $b == $B, "color test $i");
+	 ok($r == $R && $g == $G && $b == $B, "color test $x");
 	 
 		 
      }
