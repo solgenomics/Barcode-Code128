@@ -7,12 +7,15 @@
 
 use strict;
 
-use Test::More tests=>295;
+use Test::More tests=>294;
 use Barcode::Code128 qw(FNC1);
 
-use_ok("GD");
-
  SKIP: {
+
+     eval { require GD; };
+
+     skip "GD not installed - skipping test", 294 if ($@);
+
      skip "GD version < 1.20 - no png support", 294 unless $GD::VERSION > 1.20;
      
      my $code = new Barcode::Code128;
@@ -30,8 +33,6 @@ use_ok("GD");
 	 my ($R, $G, $B) = $good->rgb($good->getPixel($x, $y));
 	 
 	 ok($r == $R && $g == $G && $b == $B, "color test $x");
-	 
-		 
      }
 }
 
