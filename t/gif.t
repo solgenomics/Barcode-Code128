@@ -3,7 +3,7 @@
 # Make sure the module loads correctly - if GD is 1.20 or higher, use
 # 1..0 to cause "skipped on this platform"
 
-
+use lib 'lib/';
 use strict;
 
 use Test::More tests=>294;
@@ -14,7 +14,7 @@ use Barcode::Code128 qw(FNC1);
      eval { require GD; };
 
      skip "GD not installed - skipping test", 294 if ($@);
-     skip "GD version > 1.20 - use png", 294 unless $GD::VERSION < 1.20;
+     skip "GD version > 1.20  and < 2.3 - use png", 294 unless ($GD::VERSION < 1.20 or $GD::VERSION > 2.2);
      
      my $code = new Barcode::Code128;
      

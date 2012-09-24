@@ -97,7 +97,7 @@ package Barcode::Code128;
 
 use strict;
 
-use vars qw($GD_TYPE $VERSION %CODE_CHARS %CODE @ENCODING @EXPORT_OK
+use vars qw($GD_GIF $GD_PNG $VERSION %CODE_CHARS %CODE @ENCODING @EXPORT_OK
             %EXPORT_TAGS %FUNC_CHARS @ISA %OPTIONS);
 
 use constant CodeA  => chr(0xf4);
@@ -116,12 +116,17 @@ use constant Stop   => chr(0xff);
 use Carp;
 use Exporter;
 
-# Try to load GD.  If it succeeds, set $GD_TYPE accordingly.
+# Try to load GD.  If it succeeds, set $GD_GIF and $GD_PNG accordingly.
 BEGIN {
-    $GD_TYPE = undef;
+    $GD_PNG = undef;
+    $GD_GIF = undef;
     eval { require GD && GD->import() };
-    $GD_TYPE = ($GD::VERSION > 1.20 ? 'png' : 'gif')
-        unless $@;
+    
+    if (!$@) { 
+	$GD_GIF = ($GD::VERSION < 1.20) || ($GD::VERSION > 2.3);
+	$GD_PNG = $GD::VERSION > 1.20;
+    }
+		   
 }
 
 %OPTIONS =
@@ -139,7 +144,7 @@ BEGIN {
      right_margin     => 0,
      padding          => 20,
      font_align       => 'left',
-     transparent_text => (defined $GD_TYPE && $GD_TYPE eq 'gif' ? 1 : 0),
+     transparent_text => (defined $GD_GIF && $GD_GIF==1 ? 1 : 0),
     );
 
 @EXPORT_OK = qw(CodeA CodeB CodeC FNC1 FNC2 FNC3 FNC4 Shift StartA
@@ -416,7 +421,7 @@ sub gd_image
     }
 
     croak "The gd_image() method of Barcode::Code128 requires the GD module"
-        unless $GD_TYPE;
+        unless ($GD_GIF || $GD_PNG);
 
     my $scale = $opts{scale};
     croak "Scale ($scale) must be a positive integer"
@@ -503,9 +508,9 @@ sub gif
 {
     my($self, $text, $x, $y, $scale) = @_;
     croak "The gif() method of Barcode::Code128 requires the GD module"
-        unless $GD_TYPE;
+        unless ($GD_GIF || $GD_PNG);
     croak "The gif() method of Barcode::Code128 requires version less than 1.20 of GD"
-        unless defined  $GD_TYPE && $GD_TYPE eq 'gif';
+        unless defined($GD_GIF) && $GD_GIF ==1;
     my $image = $self->gd_image($text, $x, $y, $scale);
     return $image->gif();
 }
@@ -514,9 +519,9 @@ sub png
 {
     my($self, $text, $x, $y, $scale) = @_;
     croak "The png() method of Barcode::Code128 requires the GD module"
-        unless $GD_TYPE;
+        unless ($GD_GIF || $GD_PNG);
     croak "The png() method of Barcode::Code128 requires at least version 1.20 of GD"
-        unless defined  $GD_TYPE && $GD_TYPE eq 'png';
+        unless defined  $GD_PNG && $GD_PNG == 1;
     my $image = $self->gd_image($text, $x, $y, $scale);
     return $image->png();
 }
